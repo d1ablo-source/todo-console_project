@@ -11,8 +11,8 @@ class Task:
 class TodoError(Exception):
     pass
 
-class FileNotFoundError(Exception):
-    pass
+# class FileNotFoundErrorr(Exception):
+#     pass
 
 
 class TodoList:
@@ -30,6 +30,12 @@ class TodoList:
             raise TodoError(f"Нет задачи с номером {index}")
         self.tasks[index].done = True
 
+
+    def pending(self):
+        for task in self.tasks:
+            if not task.done:
+                yield task
+
     def save(self, path):
         data = [asdict(t) for t in self.tasks]
         text = json.dumps(data, ensure_ascii=False)
@@ -39,11 +45,9 @@ class TodoList:
         try:
             text = Path(path).read_text(encoding="utf-8")
         except FileNotFoundError:
-            print("Файл не найден, начинаем с пустого списка")
             return
         data = json.loads(text)
-        task = [Task(**d) for d in data]
-        self.tasks = task
+        self.tasks = [Task(**d) for d in data]
 
 # todo = TodoList()
 # todo.add("хлеб")
